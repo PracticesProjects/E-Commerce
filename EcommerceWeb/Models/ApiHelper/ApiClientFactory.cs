@@ -45,12 +45,10 @@ public class ApiClientFactory: IApiClient
         object jsonContent)
     {
         IEnumerable<T> objList;
-        StringContent content = new
-            StringContent(JsonSerializer.Serialize(string.Empty),
-            Encoding.UTF8, "text/plain");
+        //string content = JsonSerializer.Serialize(jsonContent);
         //string strAPIUrl = $"Catalog/GetCatalogItemListAsync";
         var response = await
-                _httpClient.PostAsJsonAsync(apiPath, content);
+                _httpClient.PostAsJsonAsync(apiPath, jsonContent);
 
 
         if (response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -69,6 +67,37 @@ public class ApiClientFactory: IApiClient
             return objList;
         }        
     }
+
+    public async Task<T> PostAsync<T>(string apiPath, object jsonContent)
+    {
+        //StringContent content = new
+        //    StringContent(JsonSerializer.Serialize(jsonContent),
+        //    Encoding.UTF8, "text/plain");
+
+        T obj;
+        var response = await _httpClient.PostAsJsonAsync(apiPath, jsonContent);
+        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            string apiResponse = await response.Content.ReadAsStringAsync();
+            obj = JsonSerializer.Deserialize<T>(apiResponse, options);
+            return obj;
+        }
+        else
+        {
+            obj = Activator.CreateInstance<T>();
+            return obj;
+        }
+    }
+
+    public async Task PostVoidAsync(string apiPath, object jsonContent)
+    {
+        var response = await _httpClient.PostAsJsonAsync(apiPath, jsonContent);        
+    }
+
     public Task<T> GetAsync<T>()
     {
         throw new NotImplementedException();
@@ -89,10 +118,7 @@ public class ApiClientFactory: IApiClient
         throw new NotImplementedException();
     }
 
-    public Task<T> PostAsync<T>(string apiPath, object jsonContent)
-    {
-        throw new NotImplementedException();
-    }
+    
 
     public Task<T> PostAsync<T>(string apiPath, object jsonContent, bool addClientHeader = false, bool accessToken = false)
     {
@@ -104,9 +130,6 @@ public class ApiClientFactory: IApiClient
         throw new NotImplementedException();
     }
 
-    public Task PostVoidAsync(string apiPath, object jsonContent)
-    {
-        throw new NotImplementedException();
-    }
+    
 }
 

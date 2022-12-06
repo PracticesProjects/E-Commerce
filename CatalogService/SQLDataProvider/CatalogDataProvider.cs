@@ -41,6 +41,26 @@ public class CatalogDataProvider: ICatalogDataProvider
         }
     }
 
+    //public async CatalogDelteItemByIDAsync(Guid CatalogItemID)
+
+    public async Task CatalogDelteItemByIDAsync(Guid CatalogItemID)
+    {
+        List<SQLParam> sParam = new List<SQLParam>
+        {
+            new SQLParam("@ItemID", CatalogItemID)
+        };
+        SQLExecuteNonQueryAsync objSQLH = new SQLExecuteNonQueryAsync();
+        string spName = objSQLH.GetFullSpName("uspDeleteCatalogItemByID");
+        try
+        {
+             await objSQLH.ExecuteNonQueryAsync(spName, sParam);
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
     public async Task CatalogItemAddAsync(CatalogItem objCatalogItem)
     {
         List<SQLParam> sParam = new List<SQLParam>
@@ -96,7 +116,8 @@ public class CatalogDataProvider: ICatalogDataProvider
         catch
         {
             throw;
-        }
+        }        
+        
     }
 }
 

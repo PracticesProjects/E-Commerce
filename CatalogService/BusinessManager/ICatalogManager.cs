@@ -1,4 +1,5 @@
 ﻿using CommonEnitity.Catalog;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CatalogService.BusinessManager;
 
@@ -9,5 +10,7 @@ public interface ICatalogManager
 
     Task CatalogItemAddAsync(CatalogItem objCatalogItem);
     Task CatalogItemUpdateAsync(CatalogItem objCatalogItem);
+
+    Task CatalogDelteItemByIDAsync(Guid CatalogItemID);
 }
 

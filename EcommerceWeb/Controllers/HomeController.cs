@@ -66,17 +66,112 @@ namespace WebEcommerce.Controllers
             return View();
         }
 
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveItem([Bind("Name,Description,Price")] CatalogItem item)
+        {
+            item.Id = Guid.NewGuid();
+            item.AvailableStock = 1;
+            item.PictureUri = string.Empty;
+
+            CatalogBrand objBrand = new CatalogBrand();
+            objBrand.Id = 1;
+            objBrand.Brand = "B1";
+
+            item.CatalogBrand = objBrand;
+
+            item.PictureFileName = "PictureFile";
+            CatalogType objCType = new CatalogType();
+            objCType.Id = 1;
+            objCType.Type = "Type1";
+            item.CatalogType = objCType;
+
+            item.RestockThreshold = 20;
+            item.MaxStockThreshold = 20;
+            item.CatalogTypeId = 1;
+
+            //StringContent content = new
+            //    StringContent(JsonSerializer.Serialize(item),
+            //    Encoding.UTF8, "text/plain");
+
+            string strAPIUrl = $"Catalog/CatalogItemAddAsync";
+           
+            await  _clientFactory.PostVoidAsync(strAPIUrl, item);
+            return RedirectToAction("GetList", "Home");
+        }
+
         public async Task<IActionResult> GetList()
         {
             string strAPIUrl = $"Catalog/GetCatalogItemListAsync";
-            StringContent content = new
-                StringContent(JsonSerializer.Serialize(string.Empty),
-                Encoding.UTF8, "text/plain");
+            //StringContent content = new
+            //    StringContent(JsonSerializer.Serialize(string.Empty),
+            //    Encoding.UTF8, "text/plain");
             var objList = await
-                _clientFactory.PostListAsync<CatalogItem>(strAPIUrl, content);
+                _clientFactory.PostListAsync<CatalogItem>(strAPIUrl, string.Empty);
             return View(objList);
             
         }
+
+        [HttpGet]
+
+        public async Task<IActionResult> Edit([FromRoute(Name = "Id")] Guid Id)
+        {
+            string strAPIUrl = $"Catalog/GetCatalogItemByIDAsync";
+            CatalogItem objItme = await _clientFactory.PostAsync<CatalogItem>(strAPIUrl, Id);
+
+            return View(objItme); //RedirectToAction("GetList", "Home");
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit([Bind("Id,Name,Description,Price")] CatalogItem item)
+        {
+            item.AvailableStock = 1;
+            item.PictureUri = string.Empty;
+
+            CatalogBrand objBrand = new CatalogBrand();
+            objBrand.Id = 1;
+            objBrand.Brand = "B1";
+
+            item.CatalogBrand = objBrand;
+
+            item.PictureFileName = "PictureFile";
+            CatalogType objCType = new CatalogType();
+            objCType.Id = 1;
+            objCType.Type = "Type1";
+            item.CatalogType = objCType;
+
+            item.RestockThreshold = 20;
+            item.MaxStockThreshold = 20;
+            item.CatalogTypeId = 1;
+
+            string strAPIUrl = $"Catalog/CatalogItemUpdateAsync";
+            await _clientFactory.PostVoidAsync(strAPIUrl, item);
+
+            return RedirectToAction("GetList", "Home");
+        }
+
+        //[HttpGet("{ItemId}")]
+        //[HttpGet("{Id}")]
+        //Route[ ("/delete/{id}")]
+        [HttpGet]
+
+        public async Task<IActionResult> Delete([FromRoute(Name = "Id")] Guid Id)
+        {
+            string strAPIUrl = $"Catalog/CatalogDelteItemByIDAsync";
+            await _clientFactory.PostVoidAsync(strAPIUrl, Id);
+            return RedirectToAction("GetList", "Home");
+        }
+
+        [HttpGet]
+
+        public IActionResult Details([FromRoute(Name = "Id")] string Id)
+        {
+            return RedirectToAction("GetList", "Home");
+        }
+
 
         public IActionResult Privacy()
         {

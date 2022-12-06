@@ -35,6 +35,11 @@ namespace SQLHelper
             //Note there is lot of way to set this, please use your needed way to do this connections string vallue setting
             _connectionString = Connectionconfig;
         }
+        public SQLHandler(string connectionString)
+        {
+            //Note there is lot of way to set this, please use your needed way to do this connections string vallue setting
+            _connectionString = Connectionconfig;
+        }
         #endregion
 
         #region "Properties"

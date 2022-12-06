@@ -17,6 +17,12 @@ public class CatalogManager : ICatalogManager
         return await objcatalogDataProvider.GetCatalogItemByIDAsync(itemID);
     }
 
+    public async Task CatalogDelteItemByIDAsync(Guid CatalogItemID)
+    {
+        ICatalogDataProvider objcatalogDataProvider = CatalogFactory.Create();
+        await objcatalogDataProvider.CatalogDelteItemByIDAsync(CatalogItemID);
+    }
+
     public async Task CatalogItemAddAsync(CatalogItem objCatalogItem)
     {
         ICatalogDataProvider objcatalogDataProvider = CatalogFactory.Create();
